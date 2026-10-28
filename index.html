@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Vaniaty Panel</title>
+    <style>
+        body { background: #121212; color: white; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { background: #1e1e1e; padding: 30px; border-radius: 8px; width: 320px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border-top: 3px solid #ff4757; position: relative; }
+        
+        input { width: 90%; padding: 12px; margin: 10px 0; background: #2c2c2c; border: 1px solid #444; color: white; border-radius: 4px; outline: none; }
+        input:focus { border-color: #ff4757; }
+        
+        button { width: 100%; padding: 12px; margin-top: 10px; background: #ff4757; border: none; color: white; cursor: pointer; font-weight: bold; border-radius: 4px; transition: 0.2s; }
+        button:hover { background: #ff6b81; }
+        
+        .toggle { margin-top: 15px; font-size: 0.9em; cursor: pointer; color: #aaa; text-decoration: underline; }
+        .hidden { display: none; }
+        
+        h2 { margin-top: 0; color: #fff; }
+        
+        .key-display { background: #000; padding: 10px; word-break: break-all; font-family: monospace; color: #00ff00; margin-bottom: 15px; border: 1px dashed #444; min-height: 40px;}
+        
+        /* Loader */
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #ff4757; border-radius: 50%; width: 20px; height: 20px; animation: spin 2s linear infinite; display: inline-block; vertical-align: middle; margin-right: 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Logo Discord */
+        .discord-support {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .discord-support:hover { opacity: 0.8; }
+        .discord-icon {
+            width: 24px;
+            height: 24px;
+            fill: #5865F2; /* Couleur officielle Discord */
+        }
+        .discord-text {
+            color: #aaa;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Formulaire Login -->
+    <div class="box" id="loginForm">
+        <h2>VANIATY LOGIN</h2>
+        <input type="text" id="u" placeholder="Username">
+        <input type="password" id="p" placeholder="Password">
+        <button onclick="doLogin()">SE CONNECTER</button>
+        <div class="toggle" onclick="showRegister()">Créer un compte</div>
+        <p id="msg" style="color:red; height:15px;"></p>
+    </div>
+
+    <!-- Formulaire Inscription -->
+    <div class="box hidden" id="regForm">
+        <h2>INSCRIPTION</h2>
+        <input type="text" id="ru" placeholder="Choisir Username">
+        <input type="password" id="rp" placeholder="Choisir Password">
+        <button onclick="doRegister()">S'INSCRIRE</button>
+        <div class="toggle" onclick="showLogin()">Retour à la connexion</div>
+        <p id="rmsg" style="color:#00ff00; height:15px;"></p>
+    </div>
+
+    <!-- Panel Principal -->
+    <div class="box hidden" id="panel">
+        <h2>PANEL VANIATY</h2>
+        <p>Bienvenue <span id="uName"></span></p>
+        <div class="key-display" id="kDisplay"></div>
+        
+        <!-- Bouton qui déclenche le téléchargement -->
+        <button id="dlBtn" onclick="startDownload()">TÉLÉCHARGER LE CHEAT</button>
+        
+        <!-- Zone de statut de téléchargement -->
+        <div id="dlStatus" class="hidden" style="margin-top:15px;">
+            <div class="loader"></div> Téléchargement en cours...
+            <br><br>
+            <a id="openLink" href="#" download="Vaniaty.exe" style="color:#00ff00; text-decoration:none; font-weight:bold;">
+                [ Cliquer ici pour lancer ]
+            </a>
+        </div>
+
+        <!-- LOGO DISCORD SUPPORT -->
+        <div class="discord-support" onclick="window.open('https://discord.gg/fMpcz9EKEK', '_blank')">
+            <svg class="discord-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.29a18.27 18.27 0 0 0-5.464 0 12.64 12.64 0 0 0-.617-1.29.073.073 0 0 0-.079-.037 19.732 19.732 0 0 0-4.885 1.515.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.224-1.96.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.215.074.074 0 0 0 .007-.11c-.316-.462-.638-.94-.928-1.437a.074.074 0 0 1 .04-.11c.093-.035.185-.07.276-.105a.075.075 0 0 0 .057-.092c.03-.077.057-.155.082-.233a.075.075 0 0 0-.057-.092c-.093-.035-.185-.07-.276-.105a.074.074 0 0 1-.04-.11c.29-.497.612-.975.928-1.437a.074.074 0 0 0-.007-.11c.128-.083.257-.162.372-.215a.077.077 0 0 1 .008-.128 13.013 13.013 0 0 0 1.872-.892.078.078 0 0 0 .041-.106 14.09 14.09 0 0 0 1.224-1.96.078.078 0 0 0 .084-.028 19.9 19.9 0 0 0 5.993-3.03.082.082 0 0 0 .031-.057c.45-4.618-.518-9.153-2.04-12.66a.07.07 0 0 0-.032-.027zM8.02 15.33c-1.253 0-2.287-1.165-2.287-2.59 0-1.424 1.015-2.59 2.287-2.59 1.274 0 2.287 1.166 2.287 2.59 0 1.425-1.024 2.59-2.287 2.59zm7.975 0c-1.253 0-2.287-1.165-2.287-2.59 0-1.424 1.015-2.59 2.287-2.59 1.274 0 2.287 1.166 2.287 2.59 0 1.425-1.015 2.59-2.287 2.59z"/>
+            </svg>
+            <span class="discord-text">Support Discord</span>
+        </div>
+    </div>
+
+    <script>
+        // URL du fichier sur Discord (Avec signature)
+        const EXE_URL = "https://cdn.discordapp.com/attachments/1564652324771733595/1564652364454043710/Launcher.exe?ex=6ae20b91&is=6ae0ba11&hm=63be140f257509d6d750db23da57a0ede1a8d09ea75eb5386bd9fb3b62758cb9";
+
+        // Navigation
+        function showRegister() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('regForm').classList.remove('hidden');
+        }
+        function showLogin() {
+            document.getElementById('regForm').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+        }
+
+        // Inscription
+        async function doRegister() {
+            const u = document.getElementById('ru').value;
+            const p = document.getElementById('rp').value;
+            if(!u || !p) return;
+
+            const res = await fetch('/api/register', { 
+                method: 'POST', 
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username: u, password: p}) 
+            });
+            const data = await res.json();
+
+            if(data.status === 'ok') {
+                document.getElementById('rmsg').innerText = "Compte créé ! Clé : " + data.key;
+                setTimeout(() => {
+                    document.getElementById('ru').value = u;
+                    document.getElementById('rp').value = p;
+                    showLogin();
+                }, 2000);
+            } else {
+                document.getElementById('rmsg').innerText = "Erreur : " + (data.message || 'Déjà pris');
+            }
+        }
+
+        // Connexion
+        async function doLogin() {
+            const u = document.getElementById('u').value;
+            const p = document.getElementById('p').value;
+            
+            const res = await fetch('/api/login', { 
+                method: 'POST', 
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username: u, password: p}) 
+            });
+            const data = await res.json();
+
+            if(data.status === 'ok') {
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('panel').classList.remove('hidden');
+                document.getElementById('uName').innerText = data.user;
+                document.getElementById('kDisplay').innerText = data.key;
+            } else {
+                document.getElementById('msg').innerText = "Identifiants incorrects";
+            }
+        }
+
+        // Fonction de Téléchargement
+        function startDownload() {
+            const btn = document.getElementById('dlBtn');
+            const status = document.getElementById('dlStatus');
+            const link = document.getElementById('openLink');
+
+            // Cacher le bouton et montrer le loader
+            btn.classList.add('hidden');
+            status.classList.remove('hidden');
+
+            // Créer un lien invisible pour forcer le téléchargement
+            const a = document.createElement('a');
+            a.href = EXE_URL;
+            a.download = 'Vaniaty.exe';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            // Mettre à jour le lien "Cliquer ici" avec la même URL
+            link.href = EXE_URL;
+        }
+    </script>
+</body>
+</html>
